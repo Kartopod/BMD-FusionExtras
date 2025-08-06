@@ -1,0 +1,19 @@
+-- BMD-FusionExtras - Additional tools to improve fusion's functionality
+-- Copyright (c) 2025 Karto
+--
+-- Licensed under the MIT License. See LICENSE file in the project root.
+
+PersistentData = {}
+PersistentData.__index = PersistentData
+
+rootName = "FusionExtras"
+
+-- Flow_BlenderGrab
+PersistentData.Flow_BlenderGrab = rootName .. ".Flow_BlenderGrab"
+
+-- Flow_BlenderDuplicateGrab
+PersistentData.Flow_BlenderDuplicateGrab = rootName .. ".Flow_BlenderDuplicateGrab"
+
+
+-- Add to the global table
+_G.PersistentData = PersistentData

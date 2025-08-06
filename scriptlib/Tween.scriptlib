@@ -1,0 +1,210 @@
+-- BMD-FusionExtras - Additional tools to improve fusion's functionality
+-- Copyright (c) 2025 Karto
+--
+-- Licensed under the MIT License. See LICENSE file in the project root.
+
+Tween = {}
+Tween.__index = Tween
+
+Tween.ActiveTweens = {}
+
+function Tween.new()
+    local self = setmetatable({}, Tween)
+
+    self.tweenerQueue = {}
+    self.activeTweenerIndex = 1
+    self.finished = false
+    self.Update = nil
+
+    table.insert(Tween.ActiveTweens, self)
+
+    return self
+end
+
+Tween.TweenerType = {
+    Position = 1,
+    Interval = 2,
+    Callback = 3
+}
+
+function Tween:TweenInterval(duration)
+    local startTime = self:GetStartTime()
+    local tweener = {
+        tweenerType = Tween.TweenerType.Interval,
+        
+        duration = duration,
+        startTime = startTime,
+        endTime = startTime + duration,
+    }
+    
+    table.insert(self.tweenerQueue, tweener)
+end
+
+function Tween:TweenCallback(callback)
+    local tweener = {
+        tweenerType = Tween.TweenerType.Callback,
+        callback = callback
+    }
+    
+    table.insert(self.tweenerQueue, tweener)
+end
+
+-- startPos, and endPos need to be tables with x and y values. If startPos is nil, the current relative position.
+-- duration and easingFunction can either be tables or just a single value. If a single value is provided, it will be used for both x and y.
+function Tween:TweenPosition(tool, startPos, endPos, duration, easingFunction)
+    startPos = startPos or {}
+
+    if type(duration) == "number" then
+        duration = {duration, duration}
+    end
+    if type(easingFunction) == "function" then
+        easingFunction = {easingFunction, easingFunction}
+    end
+
+    local startTime = self:GetStartTime()
+    local endTime = startTime + math.max(duration[1], duration[2])
+
+    -- Create the tweener with correct start/end times
+    local tweener = {
+        tweenerType = Tween.TweenerType.Position,
+
+        tool = tool,
+        relativePositionInitialized = false,
+        
+        startX = startPos[1],
+        startY = startPos[2],
+        
+        endX = endPos[1],
+        endY = endPos[2],
+        
+        easingFunctionX = easingFunction[1],
+        easingFunctionY = easingFunction[2],
+
+        durationX = duration[1],
+        durationY = duration[2],
+        
+        duration = math.max(duration[1], duration[2]),
+        startTime = startTime,
+        endTime = endTime
+    }
+
+    table.insert(self.tweenerQueue, tweener)
+end
+
+
+function Tween:GetStartTime()
+    local startTime = os.clock()
+
+    for i = #self.tweenerQueue, 1, -1 do
+        local lastTweener = self.tweenerQueue[i]
+        
+        -- Skip Callback tweeners since they don't have a meaningful endTime
+        if lastTweener.tweenerType ~= Tween.TweenerType.Callback then
+            if lastTweener.endTime then
+                startTime = lastTweener.endTime
+                break
+            else
+                print("Warning: Non-callback tweener missing endTime!")
+            end
+        end
+    end
+
+    return startTime
+end
+
+
+Tween.Update = function()
+    local currentTime = os.clock()
+    
+    local currentTweenIndex = 1
+    while currentTweenIndex <= #Tween.ActiveTweens do
+        local tween = Tween.ActiveTweens[currentTweenIndex]
+        
+        if tween then
+            local tweener = tween.tweenerQueue[tween.activeTweenerIndex]
+            
+            
+            -- tweener will be nil when all tweeners in queue are processed. 
+            if tweener then
+                local isPositionTweener = tweener.tweenerType == Tween.TweenerType.Position
+                local isIntervalTweener = tweener.tweenerType == Tween.TweenerType.Interval
+                local isCallbackTweener = tweener.tweenerType == Tween.TweenerType.Callback
+
+                local t -- progress of tween
+
+                local elapsed
+                if not isCallbackTweener then
+                    elapsed = currentTime - tweener.startTime
+                end
+                
+                if isPositionTweener then
+                    local tX = elapsed / tweener.durationX
+                    local tY = elapsed / tweener.durationY
+                    t = math.min(tX, tY)
+
+                    local isRelativeMovement = tweener.startX == nil and tweener.startY == nil
+                    if isRelativeMovement and not tweener.relativePositionInitialized then -- Relative movement
+                        if tweener.tool == nil then 
+                            print("tool is nuil in position tweener!")
+                        end 
+                        tweener.startX, tweener.startY = comp:GetViewList().FlowView:GetPos(tweener.tool) 
+                        tweener.endX = tweener.startX + tweener.endX
+                        tweener.endY = tweener.startY + tweener.endY
+                        tweener.relativePositionInitialized = true
+                    end
+    
+                    local easedValueX = tweener.startX + (tweener.endX - tweener.startX) * tweener.easingFunctionX(tX)
+                    local easedValueY = tweener.startY + (tweener.endY - tweener.startY) * tweener.easingFunctionY(tY)
+                    comp:GetViewList().FlowView:QueueSetPos(tweener.tool, easedValueX, easedValueY)
+
+                elseif isIntervalTweener then
+                    t = elapsed / tweener.duration
+                elseif isCallbackTweener then
+                    t = 1
+                end
+    
+                if t >= 1 then -- Tweener is finished
+                    tween.activeTweenerIndex = tween.activeTweenerIndex + 1
+
+                    if isCallbackTweener then tweener.callback() end
+                end
+            else
+                tween.finished = true
+            end
+
+            currentTweenIndex = currentTweenIndex + 1
+        end
+    end
+
+    comp:GetViewList().FlowView:FlushSetPosQueue()
+
+    -- After processing all active tweens, remove finished tweens.
+    for i = #Tween.ActiveTweens, 1, -1 do
+        local tween = Tween.ActiveTweens[i]
+        if tween.finished then
+            -- Remove finished tweens from the active list
+            table.remove(Tween.ActiveTweens, i)
+        end
+    end
+
+    if #Tween.ActiveTweens == 0 then
+        if #Tween.ActiveTweens == 0 then -- If there are still no active tweens, stop the update loop
+            print("Packing up tween!")
+            UpdateLoop.DeregisterFunction(Tween.Update)
+        end
+    end
+end
+
+function Tween.Start()
+    UpdateLoop.RegisterFunction(Tween.Update)
+end
+
+function Tween:Kill()
+    self.finished = true
+end
+
+
+---
+
+-- Add to the globals table
+_G.Tween = Tween

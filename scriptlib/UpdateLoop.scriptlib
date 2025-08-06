@@ -1,0 +1,76 @@
+-- BMD-FusionExtras - Additional tools to improve fusion's functionality
+-- Copyright (c) 2025 Karto
+--
+-- Licensed under the MIT License. See LICENSE file in the project root.
+
+UpdateLoop = {}
+UpdateLoop.__index = UpdateLoop
+
+UpdateLoop.registeredFunctions = {}
+UpdateLoop.isLoopRunning = false
+UpdateLoop.interval = 0.01
+
+function UpdateLoop.Run()
+    UpdateLoop.isLoopRunning = true
+
+    while #UpdateLoop.registeredFunctions > 0 do
+        bmd.wait(UpdateLoop.interval)
+
+        -- print("Running update loop with " .. #registeredFunctions .. " registered functions.")
+
+        for _, registeredFunction in ipairs(UpdateLoop.registeredFunctions) do
+            registeredFunction()
+        end
+    end
+end
+
+function UpdateLoop.RegisterFunction(func)
+    if type(func) == "function" then
+        -- Check if the function is already registered
+        for _, registeredFunc in ipairs(UpdateLoop.registeredFunctions) do
+            if registeredFunc == func then
+                -- Function is already in the table, so don't add it
+                return
+            end
+        end
+        
+        -- Add the function if it wasn't found
+        table.insert(UpdateLoop.registeredFunctions, func)
+    else
+        error("Registered function must be a function, but it is:")
+        if func == nil then
+            print("nil")
+        else
+            print(type(func))
+        end
+    end
+
+    if not UpdateLoop.isLoopRunning then
+        UpdateLoop.Run()
+    end
+end
+
+-- Needs to be called inside each registered function or the registered function will run forever
+function UpdateLoop.DeregisterFunction(func) 
+    if type(func) == "function" then
+        for i, registeredFunc in ipairs(UpdateLoop.registeredFunctions) do
+            if registeredFunc == func then
+                table.remove(UpdateLoop.registeredFunctions, i)
+                break
+            end
+        end
+    else
+        error("Deregistered function must be a function, but it is:")
+        if func == nil then
+            print("nil")
+        else
+            print(type(func))
+        end
+    end
+end
+
+---
+
+
+-- Add to the global table
+_G.UpdateLoop = UpdateLoop

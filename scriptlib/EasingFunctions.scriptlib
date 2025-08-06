@@ -1,0 +1,242 @@
+-- BMD-FusionExtras - Additional tools to improve fusion's functionality
+-- Copyright (c) 2025 Karto
+--
+-- Licensed under the MIT License. See LICENSE file in the project root.
+
+function Linear(x)
+    return x
+end
+
+function EaseInQuad(x)
+    return x * x
+end
+
+function EaseOutQuad(x)
+    return 1 - (1 - x) * (1 - x)
+end
+
+function EaseInOutQuad(x)
+    if x < 0.5 then
+        return 2 * x * x
+    else
+        return 1 - ((-2 * x + 2)^2) / 2
+    end
+end
+
+function EaseInCubic(x)
+    return x * x * x
+end
+
+function EaseOutCubic(x)
+    return 1 - (1 - x)^3
+end
+
+function EaseInOutCubic(x)
+    if x < 0.5 then
+        return 4 * x * x * x
+    else
+        return 1 - ((-2 * x + 2)^3) / 2
+    end
+end
+
+function EaseInQuart(x)
+    return x^4
+end
+
+function EaseOutQuart(x)
+    return 1 - (1 - x)^4
+end
+
+function EaseInOutQuart(x)
+    if x < 0.5 then
+        return 8 * x^4
+    else
+        return 1 - ((-2 * x + 2)^4) / 2
+    end
+end
+
+function EaseInQuint(x)
+    return x^5
+end
+
+function EaseOutQuint(x)
+    return 1 - (1 - x)^5
+end
+
+function EaseInOutQuint(x)
+    if x < 0.5 then
+        return 16 * x^5
+    else
+        return 1 - ((-2 * x + 2)^5) / 2
+    end
+end
+
+function EaseInSine(x)
+    return 1 - math.cos((x * math.pi) / 2)
+end
+
+function EaseOutSine(x)
+    return math.sin((x * math.pi) / 2)
+end
+
+function EaseInOutSine(x)
+    return -(math.cos(math.pi * x) - 1) / 2
+end
+
+function EaseInExpo(x)
+    if x == 0 then return 0 end
+    return 2^(10 * x - 10)
+end
+
+function EaseOutExpo(x)
+    if x == 1 then return 1 end
+    return 1 - 2^(-10 * x)
+end
+
+function EaseInOutExpo(x)
+    if x == 0 then return 0 end
+    if x == 1 then return 1 end
+    if x < 0.5 then
+        return (2^(20 * x - 10)) / 2
+    else
+        return (2 - 2^(-20 * x + 10)) / 2
+    end
+end
+
+function EaseInCirc(x)
+    local v = 1 - x * x
+    if v < 0 then v = 0 end
+    return 1 - math.sqrt(v)
+end
+
+function EaseOutCirc(x)
+    local v = 1 - (x - 1)^2
+    if v < 0 then v = 0 end
+    return math.sqrt(v)
+end
+
+function EaseInOutCirc(x)
+    local function safeSqrt(v)
+        return math.sqrt(v < 0 and 0 or v)
+    end
+
+    if x < 0.5 then
+        return (1 - safeSqrt(1 - (2 * x)^2)) / 2
+    else
+        return (safeSqrt(1 - (-2 * x + 2)^2) + 1) / 2
+    end
+end
+
+local c1 = 1.70158
+local c2 = c1 * 1.525
+local c3 = c1 + 1
+local c4 = (2 * math.pi) / 3
+local c5 = (2 * math.pi) / 4.5
+
+function EaseInBack(x)
+    return c3 * x^3 - c1 * x^2
+end
+
+function EaseOutBack(x)
+    return 1 + c3 * (x - 1)^3 + c1 * (x - 1)^2
+end
+
+function EaseInOutBack(x)
+    if x < 0.5 then
+        return ((2 * x)^2 * ((c2 + 1) * 2 * x - c2)) / 2
+    else
+        return ((2 * x - 2)^2 * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2
+    end
+end
+
+function EaseInElastic(x)
+    if x == 0 then return 0 end
+    if x == 1 then return 1 end
+    return -2^(10 * x - 10) * math.sin((x * 10 - 10.75) * c4)
+end
+
+function EaseOutElastic(x)
+    if x == 0 then return 0 end
+    if x == 1 then return 1 end
+    return 2^(-10 * x) * math.sin((x * 10 - 0.75) * c4) + 1
+end
+
+function EaseInOutElastic(x)
+    if x == 0 then return 0 end
+    if x == 1 then return 1 end
+    if x < 0.5 then
+        return -(2^(20 * x - 10) * math.sin((20 * x - 11.125) * c5)) / 2
+    else
+        return (2^(-20 * x + 10) * math.sin((20 * x - 11.125) * c5)) / 2 + 1
+    end
+end
+
+-- Helper for bounce easing
+local function BounceOut(x)
+    local n1 = 7.5625
+    local d1 = 2.75
+
+    if x < 1 / d1 then
+        return n1 * x * x
+    elseif x < 2 / d1 then
+        x = x - 1.5 / d1
+        return n1 * x * x + 0.75
+    elseif x < 2.5 / d1 then
+        x = x - 2.25 / d1
+        return n1 * x * x + 0.9375
+    else
+        x = x - 2.625 / d1
+        return n1 * x * x + 0.984375
+    end
+end
+
+function EaseInBounce(x)
+    return 1 - BounceOut(1 - x)
+end
+
+function EaseOutBounce(x)
+    return BounceOut(x)
+end
+
+function EaseInOutBounce(x)
+    if x < 0.5 then
+        return (1 - BounceOut(1 - 2 * x)) / 2
+    else
+        return (1 + BounceOut(2 * x - 1)) / 2
+    end
+end
+
+---
+
+-- Add to the globals table
+_G.Linear = Linear
+_G.EaseInQuad = EaseInQuad
+_G.EaseOutQuad = EaseOutQuad
+_G.EaseInOutQuad = EaseInOutQuad
+_G.EaseInCubic = EaseInCubic
+_G.EaseOutCubic = EaseOutCubic
+_G.EaseInOutCubic = EaseInOutCubic
+_G.EaseInQuart = EaseInQuart
+_G.EaseOutQuart = EaseOutQuart
+_G.EaseInOutQuart = EaseInOutQuart
+_G.EaseInQuint = EaseInQuint
+_G.EaseOutQuint = EaseOutQuint
+_G.EaseInOutQuint = EaseInOutQuint
+_G.EaseInSine = EaseInSine
+_G.EaseOutSine = EaseOutSine
+_G.EaseInOutSine = EaseInOutSine
+_G.EaseInExpo = EaseInExpo
+_G.EaseOutExpo = EaseOutExpo
+_G.EaseInOutExpo = EaseInOutExpo
+_G.EaseInCirc = EaseInCirc
+_G.EaseOutCirc = EaseOutCirc
+_G.EaseInOutCirc = EaseInOutCirc
+_G.EaseInBack = EaseInBack
+_G.EaseOutBack = EaseOutBack
+_G.EaseInOutBack = EaseInOutBack
+_G.EaseInElastic = EaseInElastic
+_G.EaseOutElastic = EaseOutElastic
+_G.EaseInOutElastic = EaseInOutElastic
+_G.EaseInBounce = EaseInBounce
+_G.EaseOutBounce = EaseOutBounce
+_G.EaseInOutBounce = EaseInOutBounce

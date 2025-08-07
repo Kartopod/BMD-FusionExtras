@@ -53,6 +53,9 @@ The least practical script in this project, but perhaps the most fun one. Pressi
 
 *Note:* Would recommend that you do **NOT** run this script on anything important, just to be safe. 
 
+# Supporting the project
+If you find that the scripts are useful and would like to support the project, you can chuck a donation my way through Ko-fi!
+[![Donate with Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kartopod)
 
 # Installation
 - Click on the green **Code** button and then click on **Download ZIP**  

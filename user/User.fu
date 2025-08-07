@@ -18,8 +18,8 @@
 		D = "RunScript{ filename = 'Scripts:hotkey-scripts/Flow_AutoMerge.lua'}",
 		G = "RunScript{ filename = 'Scripts:hotkey-scripts/Flow_BlenderGrab.lua'}",
 		SHIFT_D = "RunScript{ filename = 'Scripts:hotkey-scripts/Flow_BlenderDuplicate.lua'}",
-		ALT_E = "RunScript{ filename = 'Scripts:hotkey-scripts/BatchEdit.lua'}",
 		CONTROL_X = "RunScript{ filename = 'Scripts:hotkey-scripts/Flow_FunDelete.lua'}",
 		SHIFT_CONTROL_ALT_SLASH = "RunScript{ filename = 'Scripts:hotkey-scripts/Flow_FunRunFromSelection.lua'}",
+		ALT_E = "RunScript{ filename = 'Scripts:hotkey-scripts/BatchEdit.lua'}",
 	},
 }

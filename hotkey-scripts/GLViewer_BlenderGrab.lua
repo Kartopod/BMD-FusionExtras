@@ -8,7 +8,7 @@
 
 
 local function Start()
-    BlenderGrab.Start("FlowView")
+    BlenderGrab.Start("GLViewer")
 end
 
 -- Execution starts here. 

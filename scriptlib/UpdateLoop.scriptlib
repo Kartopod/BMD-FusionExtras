@@ -4,7 +4,7 @@
 -- Licensed under the MIT License. See LICENSE file in the project root.
 
 UpdateLoop = {}
-UpdateLoop.__index = UpdateLoop
+-- UpdateLoop.__index = UpdateLoop
 
 UpdateLoop.registeredFunctions = {}
 UpdateLoop.isLoopRunning = false

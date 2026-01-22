@@ -22,4 +22,12 @@
 		SHIFT_CONTROL_ALT_SLASH = "RunScript{ filename = 'Scripts:hotkey-scripts/Flow_FunRunFromSelection.lua'}",
 		ALT_E = "RunScript{ filename = 'Scripts:hotkey-scripts/BatchEdit.lua'}",
 	},
+
+	Hotkeys {
+		Target = "GLViewer",
+		G = "RunScript{ filename = 'Scripts:hotkey-scripts/GLViewer_BlenderGrab.lua'}",
+		R = "RunScript{ filename = 'Scripts:hotkey-scripts/GLViewer_BlenderRotate.lua'}",
+		S = "RunScript{ filename = 'Scripts:hotkey-scripts/GLViewer_BlenderScale.lua'}",
+	},
+
 }

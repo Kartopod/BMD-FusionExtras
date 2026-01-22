@@ -19,84 +19,17 @@ local toolStartPositionTable = {}
 
 -- Initialize the grab state
 local grabbedToolInitialPositions = {}
-local lastFrameMouseX, lastFrameMouseY
-
-
-function flowToMouse(flowPosX, flowPosY)
-    local scale = flow:GetScale()
-    return flowPosX * 166 * scale, flowPosY * 55 * scale
-end
-
-function mouseToFlow(mousePosX, mousePosY)
-    local scale = flow:GetScale()
-    return mousePosX / (166 * scale), mousePosY / (55 * scale)
-end
-
-local function getMousePosition()
-    local mouse = fu:GetMousePos()
-    return mouse[1], mouse[2]
-end
-
-local function PopulateToolInitialPositions(toolList)
-    -- Calculate the offsets for each tool based on the initial mouse position
-    for _, tool in ipairs(toolList) do
-        local toolX, toolY = flow:GetPos(tool)
-        grabbedToolInitialPositions[tool] = {toolX, toolY}
-    end
-end
-
-local function QueueToolPositions(mouseDelta)
-    for tool, startingPosition in pairs(grabbedToolInitialPositions) do
-
-        local flowDeltaX, flowDeltaY = mouseToFlow(mouseDelta[1], mouseDelta[2])
-
-        flow:QueueSetPos(tool, startingPosition[1] + flowDeltaX, startingPosition[2] + flowDeltaY)
-    end
-end
-
-local Update 
-Update = function()
-    local mouseX, mouseY = getMousePosition()
-    local mouseDelta = {mouseX - lastFrameMouseX, mouseY - lastFrameMouseY}
-    local mouseButtons = fu:GetMouseButtons()
-    
-    QueueToolPositions(mouseDelta)
-    
-    if mouseButtons.LeftButton then -- Confirm action
-        UpdateLoop.DeregisterFunction(Update) 
-        
-        bmd.wait(0.1) -- Reselecting doesn't work without waiting
-        -- Select the tools again since clicking deselects them
-        for tool, _ in pairs(grabbedToolInitialPositions) do
-            flow:Select(tool, true)
-        end
-        fu:SetData(isDuplicateGrabActiveData, false)
-        comp:EndUndo(true)
-    end
-
-    if mouseButtons.RightButton then -- Cancel action and revert original state
-        UpdateLoop.DeregisterFunction(Update)
-        fu:SetData(isDuplicateGrabActiveData, false)
-        comp:EndUndo(true)
-        comp:Undo()
-    end
-    
-    flow:FlushSetPosQueue()
-end
 
 local function Start()
 
-    if fu:GetData(isGrabActiveData) or fu:GetData(isDuplicateGrabActiveData) then
-        print("Grab is already active")
-        return
-    end
+    -- if fu:GetData(isGrabActiveData) or fu:GetData(isDuplicateGrabActiveData) then
+    --     print("Grab is already active")
+    --     return
+    -- end
 
-    fu:SetData(isDuplicateGrabActiveData, true)
-    comp:StartUndo("Duplicate Grab")
+    -- fu:SetData(isDuplicateGrabActiveData, true)
+    comp:StartUndo("BlenderDuplicate")
 
-    -- Set initial mouse position
-    lastFrameMouseX, lastFrameMouseY = getMousePosition()
-    
     local firstTool = selectedToolList[1]
     
     -- Store initial positions of selected tools
@@ -125,8 +58,7 @@ local function Start()
     flow:FlushSetPosQueue()
     
     if firstTool then
-        PopulateToolInitialPositions(dupedToolList)
-        UpdateLoop.RegisterFunction(Update)
+        BlenderGrab.Start("FlowView", nil, false, nil)
     end
 end
 

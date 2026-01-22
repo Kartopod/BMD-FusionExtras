@@ -152,9 +152,9 @@ function CreateMergeNodeAtIntersection(toolInContext, tool1, tool2)
     tool2:FindMainInput(1):ConnectTo()
 
     -- Connect the tools to the merge node
-    merge.Foreground:ConnectTo(toolInContext.Output)
-    merge.Background:ConnectTo(tool1.Output)
-    tool2:FindMainInput(1):ConnectTo(merge.Output)
+    merge.Foreground:ConnectTo(toolInContext:FindMainOutput(1))
+    merge.Background:ConnectTo(tool1:FindMainOutput(1))
+    tool2:FindMainInput(1):ConnectTo(merge:FindMainOutput(1))
     -- print("Merged: " .. toolInContext.Name .. " onto -> " .. tool1.Name)
 end
 

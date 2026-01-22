@@ -8,13 +8,26 @@ This project is free and open source under the MIT License.
 All features support the ability to undo and redo. If something goes wrong you should be able to undo, to safely revert the action performed by a script. In case this does not work, please press `Shift + 0` to open the console and look for any red errors, and report the issue [here](https://github.com/Kartopod/BMD-FusionExtras/issues).  
 If you would like to suggest improvements, ask questions or discuss anything about the project, you can create a new discussion [here](https://github.com/Kartopod/BMD-FusionExtras/discussions/)! 
 
+## GLViewer_BlenderGrab, GLViewer_BlenderRotate, GLViewer_BlenderScale (Defaults: `G`, `R`, `S`)
+With the viewer focused, press any of these shortcuts to enter the respective mode to grab, rotate or scale the selected tool(s) in the flow. Right clicking anywhere will revert the action and return the node to it's previous state. 
+
+**Important: You will need to click on the viewer first to bring resolve's focus to the viewer, otherwise, the hotkey would be sent to the FlowView instead.**
+![GL_ViewerGRSDemo1](https://github.com/user-attachments/assets/65333146-ee62-442c-ad06-c2b2f6e084eb)
+
+You can use these shortcuts with multiple nodes selected to transform them together at once. Currently, these nodes will only be transformed with respect to their individual origins. 
+![GL_ViewerGRSDemo2](https://github.com/user-attachments/assets/a7153a08-ead4-4b0d-9f45-80c1aa57a3d0)
+
+_Notes:_ 
+- Currently, there are no checks in place whether a mode is already activated, so you will need to take care to not press these shortcuts multiple times, or try to switch modes while one is already active. If you accidentally do this, simply right click a couple of times to revert the action(s). Undo if needed. 
+- Currently, there is no support for constraining the transformation to a specific axis using X, Y, Z like in blender. This may come in the future. 
+
+
 ## Flow_AutoMerge (Default: `D`)
 Automatically drops a merge node onto the _line_ directly below the selected node(s) and makes the necessary connections.
 ![Flow_AutoMerge](https://github.com/user-attachments/assets/5c41bd45-9d1e-4eaf-83a3-6f103c5e6a57)  
 
 _Notes:_ 
 - Currently **does not** have support for the 'Build flow vertically' option. i.e It will only look for a line **below** the selected node.
-- Currently **does not** support groups or macros. It will only work for ungrouped nodes/connections. 
 
 ## Flow_BlenderGrab (Default: `G`)
 Blender's G to grab functionality.  

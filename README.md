@@ -87,6 +87,8 @@ If you find that the scripts are useful and would like to support the project, y
 - Go back to the extracted source folder, copy the entire **hotkey-scripts** folder and paste it into the scripts folder. Your scripts folder should now look something like this:
 <img width="1188" height="692" alt="image" src="https://github.com/user-attachments/assets/ce3ca6f0-1f97-4cd4-bd76-825e1bc6e22d" />
 
+**Important note: The <ins>contents</ins> of the scriptlib folder must be pasted here, <ins>not the whole scriptlib</ins> folder**
+
 
 - Finally, we need to set up keybinds so that the scripts run when they are pressed. Head back to the extracted source folder and find the aptly named **User.fu** file inside the **user** folder, copy it.
 Go to the path map again in the fusion preferences. Under the 'System' toggle, right click the 'Profile' entry in the list and click on the first option. 
